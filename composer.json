@@ -3,7 +3,7 @@
   "description": "PHP framework for easy interaction with Apple's Push Notification Service.",
   "type": "library",
   "keywords": ["APNS", "Framework", "Apple", "iOS", "push", "notification"],
-  "homepage": "https://github.com/immobiliare/ApnsPHP",
+  "homepage": "https://git.zsinfo.nl/Zandor300/apnsframework",
   "license": "Apache-2.0",
   "require": {
     "php": ">=7.1.0",
