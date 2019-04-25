@@ -63,5 +63,49 @@ class APNS {
 		return $this->authKeyId;
 	}
 
+	/**
+	 * Send the $notification to $token.
+	 * @param APNSNotification $notification The notification to send.
+	 * @param APNSToken $token The token to send the notification to.
+	 * @throws APNSException
+	 */
+	public function sendNotification(APNSNotification $notification, APNSToken $token): void {
+		$parameters = array();
+		$parameters['teamId'] = $this->teamId;
+		$parameters['apns-topic'] = $this->bundleId;
+		$parameters['authKeyId'] = $this->authKeyId;
+
+		$authKey = file_get_contents($this->authKeyUrl);
+		if($authKey == false) {
+			throw new APNSException("Can't read auth key. Failed to read file.");
+		}
+
+		$parameters['p_key'] = $authKey;
+		$parameters['header_jwt'] = JWT::encode(['iss' => $parameters['teamId'], 'iat' => time()], $parameters['p_key'], $parameters['authKeyId'], 'RS256');
+
+		// Prepare the header.
+		$header = array();
+		$header[] = "content-type: application/json";
+		$header[] = "authorization: bearer {$parameters['header_jwt']}";
+		$header[] = "apns-topic: {$parameters['apns-topic']}";
+
+		// Create the curl request.
+		$ch = curl_init($token->getTokenUrl());
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $notification->generateJSONPayload());
+		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
+		// Execute the curl request.
+		$response = curl_exec($ch);
+		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		$chError = curl_error($ch);
+		if (!empty($chError)) {
+			throw new APNSException("curl error: $chError");
+		}
+
+		curl_close($ch);
+	}
+
 
 }
