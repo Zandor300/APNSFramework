@@ -1,5 +1,6 @@
 # APNSFramework
 
+[![Build](https://img.shields.io/gitlab/pipeline/Zandor300/apnsframework.svg?gitlab_url=https%3A%2F%2Fgit.zsinfo.nl)](https://git.zsinfo.nl/Zandor300/apnsframework/pipelines)
 [![Version](https://img.shields.io/packagist/v/zandor300/apnsframework.svg)](https://packagist.org/packages/zandor300/apnsframework)
 [![License](https://img.shields.io/packagist/l/zandor300/apnsframework.svg)](https://git.zsinfo.nl/Zandor300/apnsframework/blob/master/LICENSE)
 [![PHP Version](https://img.shields.io/packagist/php-v/zandor300/apnsframework.svg)](https://packagist.org/packages/zandor300/apnsframework)
