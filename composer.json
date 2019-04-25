@@ -6,7 +6,8 @@
   "homepage": "https://github.com/immobiliare/ApnsPHP",
   "license": "Apache License 2.0",
   "require": {
-    "php": ">=7.1.0"
+    "php": ">=7.1.0",
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4": {
