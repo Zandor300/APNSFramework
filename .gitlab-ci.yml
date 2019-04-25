@@ -1,0 +1,25 @@
+image: composer:latest
+
+stages:
+  - lint
+
+cache:
+  paths:
+    - vendor/
+
+before_script:
+  - composer install
+
+composer-validate:
+  stage: lint
+  script:
+    - composer validate
+  tags:
+    - docker
+
+php-lint:
+  stage: lint
+  script:
+    - if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors detected"; then exit 1; fi
+  tags:
+    - docker
