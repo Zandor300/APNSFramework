@@ -1,0 +1,16 @@
+{
+  "name": "zandor300/apnsframework",
+  "description": "PHP framework for easy interaction with Apple's Push Notification Service.",
+  "type": "library",
+  "keywords": ["APNS", "Framework", "Apple", "iOS", "push", "notification"],
+  "homepage": "https://github.com/immobiliare/ApnsPHP",
+  "license": "Apache License 2.0",
+  "require": {
+    "php": ">=7.1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "APNSFramework\\": "apnsframework/"
+    }
+  }
+}
