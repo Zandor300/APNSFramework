@@ -2,6 +2,14 @@
 
 PHP framework for easy interaction with the Apple Push Notification Service.
 
+## Install
+
+You can use composer to include this framework into your project:
+
+```shell
+composer require zandor300/apnsframework
+```
+
 ## Usage
 
 ### Creating APNS object.
