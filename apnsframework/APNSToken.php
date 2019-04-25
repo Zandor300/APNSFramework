@@ -2,6 +2,8 @@
 
 namespace APNSFramework;
 
+require_once "APNSTokenEnvironment.php";
+
 /**
  * Apple Push Notification Service Token
  * Class APNSToken
@@ -16,21 +18,29 @@ class APNSToken {
 
 	/**
 	 * The environment the token is valid for.
-	 * @var integer
+	 * @var string
 	 */
 	private $environment;
 
 	/**
 	 * APNToken constructor.
 	 * @param $token string The actual token.
-	 * @param $environment integer The environment the token is valid for.
+	 * @param $environment string The environment the token is valid for.
+	 * @throws APNSException Throws when parameters are invalid.
 	 */
-	function __construct($token, $environment) {
+	function __construct(string $token, string $environment) {
+		if (!preg_match("~^[a-f0-9]{64,}$~i", $token)) {
+			throw new APNSException("Invalid token specified.");
+		}
+		if($environment != APNSTokenEnvironment::development || $environment != APNSTokenEnvironment::production) {
+			throw new APNSException("Invalid environment specified.");
+		}
 		$this->token = $token;
 		$this->environment = $environment;
 	}
 
 	/**
+	 * The actual token.
 	 * @return string
 	 */
 	public function getToken(): string {
@@ -38,10 +48,15 @@ class APNSToken {
 	}
 
 	/**
-	 * @return int
+	 * The environment the token is valid for.
+	 * @return string
 	 */
-	public function getEnvironment(): int {
+	public function getEnvironment(): string {
 		return $this->environment;
+	}
+
+	public function getTokenUrl(): string {
+		return $this->environment . "/" . $this->token;
 	}
 
 }
