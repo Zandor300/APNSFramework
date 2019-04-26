@@ -24,3 +24,12 @@ php-lint:
     - if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors detected"; then exit 1; fi
   tags:
     - docker
+
+php-lint-examples:
+  stage: lint
+  script:
+    - cd examples
+    - if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors detected"; then exit 1; fi
+  tags:
+    - docker
+  allow_failure: true
