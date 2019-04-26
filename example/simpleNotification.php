@@ -25,7 +25,7 @@ try {
     // Send the notification
     $apns->sendNotification($notification, $token);
 
-    echo "Notification sent."
+    echo "Notification sent.";
 } catch (APNSException $e) {
     echo "Error: " . $e->getMessage();
     // Handle exception
