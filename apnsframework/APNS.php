@@ -72,24 +72,18 @@ class APNS {
 	 * @throws APNSException
 	 */
 	public function sendNotification(APNSNotification $notification, APNSToken $token): void {
-		$parameters = array();
-		$parameters['teamId'] = $this->teamId;
-		$parameters['apns-topic'] = $this->bundleId;
-		$parameters['authKeyId'] = $this->authKeyId;
-
 		$authKey = file_get_contents($this->authKeyUrl);
 		if($authKey == false) {
 			throw new APNSException("Can't read auth key. Failed to read file.");
 		}
 
-		$parameters['p_key'] = $authKey;
-		$parameters['header_jwt'] = JWT::encode(['iss' => $parameters['teamId'], 'iat' => time()], $parameters['p_key'], $parameters['authKeyId'], 'RS256');
+		$authorization = JWT::encode(['iss' => $this->teamId, 'iat' => time()], $authKey, 'RS256', $this->authKeyId);
 
 		// Prepare the header.
 		$header = array();
 		$header[] = "content-type: application/json";
-		$header[] = "authorization: bearer {$parameters['header_jwt']}";
-		$header[] = "apns-topic: {$parameters['apns-topic']}";
+		$header[] = "authorization: bearer {$authorization}";
+		$header[] = "apns-topic: {$this->bundleId}";
 
 		// Create the curl request.
 		$ch = curl_init($token->getTokenUrl());
