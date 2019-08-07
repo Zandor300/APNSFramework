@@ -2,6 +2,8 @@
 
 namespace APNSFramework;
 
+use Firebase\JWT\JWT;
+
 /**
  * Apple Push Notification Service Manager
  * Class APNS

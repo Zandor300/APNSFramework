@@ -8,7 +8,8 @@
   "require": {
     "php": ">=7.1.0",
     "ext-json": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "firebase/php-jwt": "^5.0"
   },
   "autoload": {
     "psr-4": {
