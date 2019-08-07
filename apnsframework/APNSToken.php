@@ -32,7 +32,7 @@ class APNSToken {
 		if (!preg_match("~^[a-f0-9]{64,}$~i", $token)) {
 			throw new APNSException("Invalid token specified.");
 		}
-		if($environment != APNSTokenEnvironment::development || $environment != APNSTokenEnvironment::production) {
+		if($environment != APNSTokenEnvironment::development && $environment != APNSTokenEnvironment::production) {
 			throw new APNSException("Invalid environment specified. Environment given: $environment");
 		}
 		$this->token = $token;
