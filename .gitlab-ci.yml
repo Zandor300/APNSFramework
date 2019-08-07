@@ -28,7 +28,7 @@ php-lint:
 php-lint-examples:
   stage: lint
   script:
-    - cd examples
+    - cd example
     - if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors detected"; then exit 1; fi
   tags:
     - docker
