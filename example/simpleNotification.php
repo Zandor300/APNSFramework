@@ -1,8 +1,12 @@
 <?php
 
-use APNSFramework;
+use APNSFramework\APNS;
+use APNSFramework\APNSException;
+use APNSFramework\APNSNotification;
+use APNSFramework\APNSToken;
+use APNSFramework\APNSTokenEnvironment;
 
-require_once "vendor/autoload.php";
+require_once "../vendor/autoload.php";
 
 try {
     // Create APNS object
@@ -25,8 +29,8 @@ try {
     // Send the notification
     $apns->sendNotification($notification, $token);
 
-    echo "Notification sent.";
+    echo "Notification sent." . PHP_EOL;
 } catch (APNSException $e) {
-    echo "Error: " . $e->getMessage();
+    echo "Error: " . $e->getMessage() . PHP_EOL;
     // Handle exception
 }

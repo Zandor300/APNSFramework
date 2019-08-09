@@ -1,4 +1,3 @@
-
 # Created by https://www.gitignore.io/api/phpstorm,composer
 # Edit at https://www.gitignore.io/?templates=phpstorm,composer
 
@@ -93,3 +92,8 @@ fabric.properties
 .idea/sonarlint
 
 # End of https://www.gitignore.io/api/phpstorm,composer
+
+# Ignore .p8 files.
+*.p8
+
+testNotification.php

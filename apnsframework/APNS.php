@@ -77,7 +77,7 @@ class APNS {
 			throw new APNSException("Can't read auth key. Failed to read file.");
 		}
 
-		$authorization = JWT::encode(['iss' => $this->teamId, 'iat' => time()], $authKey, 'RS256', $this->authKeyId);
+		$authorization = JWT::encode(['iss' => $this->teamId, 'iat' => time()], $authKey, 'RS256', $this->authKeyId, ['alg' => 'ES256']);
 
 		// Prepare the header.
 		$header = array();

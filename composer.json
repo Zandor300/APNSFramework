@@ -9,7 +9,7 @@
     "php": ">=7.1.0",
     "ext-json": "*",
     "ext-curl": "*",
-    "firebase/php-jwt": "^5.0"
+    "zandor300/php-jwt-apns": "^5.0"
   },
   "autoload": {
     "psr-4": {
