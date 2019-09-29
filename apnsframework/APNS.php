@@ -84,6 +84,8 @@ class APNS {
 		$header[] = "content-type: application/json";
 		$header[] = "authorization: bearer {$authorization}";
 		$header[] = "apns-topic: {$this->bundleId}";
+		$header[] = "apns-push-type: " . ($notification->getBody() != null ? "alert" : "background");
+		$header[] = "apns-priority: " . $notification->getPriority();
 
 		// Create the curl request.
 		$ch = curl_init($token->getTokenUrl());

@@ -97,6 +97,18 @@ class APNSNotification {
 	 */
 	private $isMutable = false;
 
+	/**
+	 * The priority of the notification.
+	 * Specify 10 to send the notification immediately. A value of 10 is appropriate for notifications that trigger an
+	 * alert, play a sound, or badge the app’s icon. It's an error to specify this priority for a notification whose
+	 * payload contains the content-available key.
+	 * Specify 5 to send the notification based on power considerations on the user’s device. Use this priority for
+	 * notifications whose payload includes the `content-available` key. Notifications with this priority might be
+	 * grouped and delivered in bursts to the user’s device. They may also be throttled, and in some cases not delivered.
+	 * @var int
+	 */
+	private $priority = 10;
+
 	public function generateJSONPayload(): string {
 		$payload = array();
 
@@ -371,6 +383,36 @@ class APNSNotification {
 	 */
 	public function setMutable(bool $isMutable): void {
 		$this->isMutable = $isMutable;
+	}
+
+	/**
+	 * The priority of the notification.
+	 * Use 10 to send the notification immediately.
+	 * Use 5 to send the notification based on power considerations on the user’s device.
+	 * Is 10 by default.
+	 * @return int
+	 */
+	public function getPriority(): int {
+		return $this->priority;
+	}
+
+	/**
+	 * The priority of the notification.
+	 * Specify 10 to send the notification immediately. A value of 10 is appropriate for notifications that trigger an
+	 * alert, play a sound, or badge the app’s icon. It's an error to specify this priority for a notification whose
+	 * payload contains the content-available key.
+	 * Specify 5 to send the notification based on power considerations on the user’s device. Use this priority for
+	 * notifications whose payload includes the `content-available` key. Notifications with this priority might be
+	 * grouped and delivered in bursts to the user’s device. They may also be throttled, and in some cases not delivered.
+	 * Only 10 or 5 are allowed. Other values will throw an exception.
+	 * @param int $priority
+	 * @throws APNSException Throws when priority is a value that is different from 5 or 10.
+	 */
+	public function setPriority(int $priority): void {
+		if($priority != 5 && $priority != 10) {
+			throw new APNSException("Only values 5 and 10 are allowed to be set as priority.");
+		}
+		$this->priority = $priority;
 	}
 
 }
