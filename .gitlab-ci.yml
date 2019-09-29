@@ -38,7 +38,12 @@ php-lint-examples:
 phpdox:
   stage: docs
   script:
+    - docker-php-ext-install xsl
+    - docker-php-ext-enable xsl
     - wget http://phpdox.de/releases/phpdox.phar
     - php phpdox.phar
   tags:
     - docker
+  artifacts:
+    paths:
+      - build/api/html
