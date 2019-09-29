@@ -2,6 +2,7 @@ image: composer:latest
 
 stages:
   - lint
+  - docs
 
 cache:
   paths:
@@ -33,3 +34,11 @@ php-lint-examples:
   tags:
     - docker
   allow_failure: true
+
+phpdox:
+  stage: docs
+  script:
+    - wget http://phpdox.de/releases/phpdox.phar
+    - php phpdox.phar
+  tags:
+    - docker
