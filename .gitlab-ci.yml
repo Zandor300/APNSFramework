@@ -38,8 +38,8 @@ php-lint-examples:
 phpdox:
   stage: docs
   script:
-    - docker-php-ext-install xsl
-    - docker-php-ext-enable xsl
+    - docker-php-ext-install libxslt
+    - docker-php-ext-enable libxslt
     - wget http://phpdox.de/releases/phpdox.phar
     - php phpdox.phar
   tags:
