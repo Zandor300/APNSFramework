@@ -30,10 +30,10 @@ class APNS {
 	 */
 	private $authKeyId;
 
-	public function __construct($teamId, $bundleId, $authKeyUrl, $authKeyId) {
+	public function __construct($teamId, $bundleId, $authKeyPath, $authKeyId) {
 		$this->teamId = $teamId;
 		$this->bundleId = $bundleId;
-		$this->authKeyUrl = $authKeyUrl;
+		$this->authKeyPath = $authKeyPath;
 		$this->authKeyId = $authKeyId;
 	}
 
@@ -53,10 +53,18 @@ class APNS {
 
 	/**
 	 * @return string
+     * @deprecated Use getAuthKeyPath() instead.
 	 */
 	public function getAuthKeyUrl(): string {
-		return $this->authKeyUrl;
+		return $this->getAuthKeyPath();
 	}
+
+    /**
+     * @return string
+     */
+    public function getAuthKeyPath(): string {
+        return $this->authKeyPath;
+    }
 
 	/**
 	 * @return string
@@ -72,7 +80,7 @@ class APNS {
 	 * @throws APNSException
 	 */
 	public function sendNotification(APNSNotification $notification, APNSToken $token): void {
-		$authKey = file_get_contents($this->authKeyUrl);
+		$authKey = file_get_contents($this->authKeyPath);
 		if($authKey == false) {
 			throw new APNSException("Can't read auth key. Failed to read file.");
 		}
@@ -104,6 +112,5 @@ class APNS {
 
 		curl_close($ch);
 	}
-
 
 }
