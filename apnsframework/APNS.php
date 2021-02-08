@@ -23,7 +23,7 @@ class APNS {
 	/**
 	 * @var string
 	 */
-	private $authKeyUrl;
+	private $authKeyPath;
 
 	/**
 	 * @var string
