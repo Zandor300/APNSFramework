@@ -30,6 +30,11 @@ class APNS {
 	 */
 	private $authKeyId;
 
+    /**
+     * @var string|null
+     */
+    private $rootCertificatePath = null;
+
 	public function __construct($teamId, $bundleId, $authKeyPath, $authKeyId) {
 		$this->teamId = $teamId;
 		$this->bundleId = $bundleId;
@@ -73,6 +78,24 @@ class APNS {
 		return $this->authKeyId;
 	}
 
+    /**
+     * Setter for setting the path to the root certificate .pem file.
+     * You can use this to specify a root certificate if it's not whitelisted on the system.
+     * The HTTP/2 APNs provider API root certificate is available here: https://developer.apple.com/library/archive/technotes/tn2265/_index.html#//apple_ref/doc/uid/DTS40010376-CH1-TNTAG31
+     * Note: Might require an absolute path.
+     * @param $rootCertificatePath string|null
+     */
+	public function setRootCertificatePath($rootCertificatePath) {
+	    $this->rootCertificatePath = $rootCertificatePath;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRootCertificatePath(): ?string {
+        return $this->rootCertificatePath;
+    }
+
 	/**
 	 * Send the $notification to $token.
 	 * @param APNSNotification $notification The notification to send.
@@ -100,6 +123,9 @@ class APNS {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $notification->generateJSONPayload());
 		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+		if($this->rootCertificatePath != null) {
+            curl_setopt($ch, CURLOPT_CAINFO, $this->rootCertificatePath);
+        }
 
 		// Execute the curl request.
 		$response = curl_exec($ch);
