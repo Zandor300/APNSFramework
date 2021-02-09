@@ -123,6 +123,7 @@ class APNS {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $notification->generateJSONPayload());
 		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		if($this->rootCertificatePath != null) {
             curl_setopt($ch, CURLOPT_CAINFO, $this->rootCertificatePath);
         }
