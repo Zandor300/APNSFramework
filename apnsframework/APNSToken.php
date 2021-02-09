@@ -2,7 +2,7 @@
 
 namespace APNSFramework;
 
-require_once "APNSTokenEnvironment.php";
+use APNSFramework\Exception\APNSException;
 
 /**
  * Apple Push Notification Service Token

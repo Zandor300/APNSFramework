@@ -2,6 +2,8 @@
 
 namespace APNSFramework;
 
+use APNSFramework\Exception\APNSDeviceTokenInactive;
+use APNSFramework\Exception\APNSException;
 use Firebase\JWT\JWT;
 
 /**
