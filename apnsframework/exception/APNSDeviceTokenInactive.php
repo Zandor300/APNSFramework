@@ -1,6 +1,6 @@
 <?php
 
-namespace APNSFramework;
+namespace APNSFramework\Exception;
 
 /**
  * Class APNSDeviceTokenInactive
