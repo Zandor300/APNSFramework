@@ -71,6 +71,8 @@ try {
 ```php
 try {
     $apns->sendNotification($notification, $token);
+} catch (APNSDeviceTokenInactive $e) {
+    // Remove device token from database since it's inactive.
 } catch (APNSException $e) {
     echo "Error: " . $e->getMessage();
     // Handle exception
