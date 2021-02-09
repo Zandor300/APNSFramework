@@ -10,7 +10,7 @@ require_once "../vendor/autoload.php";
 
 try {
     // Create APNS object
-    $apns = new APNS("teamId", "bundleId", "authKeyUrl", "authKeyId");
+    $apns = new APNS("teamId", "bundleId", "authKeyPath", "authKeyId");
 
     // Create notification
     $notification = new APNSNotification();

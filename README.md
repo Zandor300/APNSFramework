@@ -28,11 +28,11 @@ use APNSFramework;
 
 $teamId = "";
 $bundleId = "";
-$authKeyUrl = "";
+$authKeyPath = "";
 $authKeyId = "";
 
 try {
-    $apns = new APNS($teamId, $bundleId, $authKeyUrl, $authKeyId);
+    $apns = new APNS($teamId, $bundleId, $authKeyPath, $authKeyId);
 } catch (APNSException $e) {
     echo "Error: " . $e->getMessage();
     // Handle exception
