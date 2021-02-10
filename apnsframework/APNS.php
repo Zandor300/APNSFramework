@@ -37,11 +37,27 @@ class APNS {
      */
     private $rootCertificatePath = null;
 
+    /**
+     * @var resource|null
+     */
+    private $curlHandle = null;
+
+    /**
+     * @var string|null
+     */
+    private $apnsAuthorization = null;
+
     public function __construct($teamId, $bundleId, $authKeyPath, $authKeyId) {
         $this->teamId = $teamId;
         $this->bundleId = $bundleId;
         $this->authKeyPath = $authKeyPath;
         $this->authKeyId = $authKeyId;
+    }
+
+    public function __destruct() {
+        if($this->curlHandle != null) {
+            curl_close($this->curlHandle);
+        }
     }
 
     /**
@@ -100,6 +116,21 @@ class APNS {
     }
 
     /**
+     * @return string
+     * @throws APNSException
+     */
+    private function getAPNSAuthorizationToken(): string {
+        if($this->apnsAuthorization == null) {
+            $authKey = file_get_contents($this->authKeyPath);
+            if ($authKey == false) {
+                throw new APNSException("Can't read auth key. Failed to read file.");
+            }
+            $this->apnsAuthorization = JWT::encode(["iss" => $this->teamId, "iat" => time()], $authKey, "ES256", $this->authKeyId);
+        }
+        return $this->apnsAuthorization;
+    }
+
+    /**
      * Send the $notification to $token.
      * @param APNSNotification $notification The notification to send.
      * @param APNSToken $token The token to send the notification to.
@@ -107,12 +138,7 @@ class APNS {
      * @throws APNSDeviceTokenInactive If the APNSToken is inactive and can be removed.
      */
     public function sendNotification(APNSNotification $notification, APNSToken $token): void {
-        $authKey = file_get_contents($this->authKeyPath);
-        if ($authKey == false) {
-            throw new APNSException("Can't read auth key. Failed to read file.");
-        }
-
-        $authorization = JWT::encode(['iss' => $this->teamId, 'iat' => time()], $authKey, 'ES256', $this->authKeyId);
+        $authorization = $this->getAPNSAuthorizationToken();
 
         // Prepare the header.
         $header = array();
@@ -123,21 +149,23 @@ class APNS {
         $header[] = "apns-priority: " . $notification->getPriority();
 
         // Create the curl request.
-        $ch = curl_init($token->getTokenUrl());
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $notification->generateJSONPayload());
-        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        if($this->curlHandle == null) {
+            $this->curlHandle = curl_init();
+        }
+        curl_setopt($this->curlHandle, CURLOPT_URL, $token->getTokenUrl());
+        curl_setopt($this->curlHandle, CURLOPT_POSTFIELDS, $notification->generateJSONPayload());
+        curl_setopt($this->curlHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
+        curl_setopt($this->curlHandle, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($this->curlHandle, CURLOPT_RETURNTRANSFER, true);
         if ($this->rootCertificatePath != null) {
-            curl_setopt($ch, CURLOPT_CAINFO, $this->rootCertificatePath);
+            curl_setopt($this->curlHandle, CURLOPT_CAINFO, $this->rootCertificatePath);
         }
 
         // Execute the curl request.
-        $response = curl_exec($ch);
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $response = curl_exec($this->curlHandle);
+        $httpcode = curl_getinfo($this->curlHandle, CURLINFO_HTTP_CODE);
 
-        $chError = curl_error($ch);
-        curl_close($ch);
+        $chError = curl_error($this->curlHandle);
         if (!empty($chError)) {
             throw new APNSException("curl error: $chError");
         }
