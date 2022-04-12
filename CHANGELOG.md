@@ -1,3 +1,10 @@
+## [1.4.1](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.4.0...v1.4.1) (2022-04-12)
+
+
+### Bug Fixes
+
+* Fix CHANGELOG contents. ([f3102ab](https://git.zsinfo.nl/Zandor300/apnsframework/commit/f3102ab220843ed879a553d61b0263f78900fa3d))
+
 # [1.4.0](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.3.3...v1.4.0) (2022-04-12)
 
 
