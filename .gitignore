@@ -97,3 +97,6 @@ fabric.properties
 *.p8
 
 testNotification.php
+
+/node_modules/
+yarn-error.log
