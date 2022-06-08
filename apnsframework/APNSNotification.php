@@ -145,20 +145,20 @@ class APNSNotification {
 
         $payload['aps'] = array();
 
-        if ($this->body != null) {
+        if ($this->body !== null) {
             $payload['aps']['alert'] = array();
             $payload['aps']['alert']['body'] = $this->body;
-            if ($this->title != null) {
+            if ($this->title !== null) {
                 $payload['aps']['alert']['title'] = $this->title;
             }
-            if ($this->subtitle != null) {
+            if ($this->subtitle !== null) {
                 $payload['aps']['alert']['subtitle'] = $this->subtitle;
             }
-            if ($this->launchImageName != null) {
+            if ($this->launchImageName !== null) {
                 $payload['aps']['alert']['launch-image'] = $this->launchImageName;
             }
         }
-        if ($this->badge != null) {
+        if ($this->badge !== null) {
             $payload['aps']['badge'] = $this->badge;
         }
         if (!$this->isCritical) {
@@ -171,10 +171,10 @@ class APNSNotification {
                 $payload['aps']['sound']['volume'] = $this->soundVolume;
             }
         }
-        if ($this->threadId != null) {
+        if ($this->threadId !== null) {
             $payload['aps']['thread-id'] = $this->threadId;
         }
-        if ($this->category != null) {
+        if ($this->category !== null) {
             $payload['aps']['category'] = $this->category;
         }
         if ($this->isMutable) {
