@@ -1,3 +1,10 @@
+# [1.5.0](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.4.1...v1.5.0) (2022-06-08)
+
+
+### Features
+
+* Support php-jwt version 6.0 or higher. ([774c02b](https://git.zsinfo.nl/Zandor300/apnsframework/commit/774c02b734831a578a8cf733c15d0db102a5ac74))
+
 ## [1.4.1](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.4.0...v1.4.1) (2022-04-12)
 
 
