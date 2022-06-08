@@ -98,6 +98,14 @@ class APNSNotification {
     private $isMutable = false;
 
     /**
+     * The background notification flag. To perform a silent background update, specify the value 1 and don’t include
+     * the alert, badge, or sound keys in your payload.
+     * See https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_background_updates_to_your_app
+     * @var boolean
+     */
+    private $isContentAvailable = false;
+
+    /**
      * The priority of the notification.
      * Specify 10 to send the notification immediately. A value of 10 is appropriate for notifications that trigger an
      * alert, play a sound, or badge the app’s icon. It's an error to specify this priority for a notification whose
@@ -108,6 +116,29 @@ class APNSNotification {
      * @var int
      */
     private $priority = 10;
+
+    /**
+     * A string that indicates the importance and delivery timing of a notification. The string values “passive”,
+     * “active”, “time-sensitive”, or “critical” correspond to the UNNotificationInterruptionLevel enumeration cases.
+     * See https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel
+     * Possible values:
+     * - null: Let APNS use the default value.
+     * - "passive": The system adds the notification to the notification list without lighting up the screen or playing a sound.
+     * - "active": The system presents the notification immediately, lights up the screen, and can play a sound.
+     * - "time-sensitive": The system presents the notification immediately, lights up the screen, and can play a sound, but won’t break through system notification controls.
+     * - "critical": The system presents the notification immediately, lights up the screen, and bypasses the mute switch to play a sound.
+     * Note that “time-sensitive” and “critical” require additional capabilities to be added to your bundle identifier.
+     * @var string|null
+     */
+    private $interruptionLevel = null;
+
+    /**
+     * The relevance score, a number between 0 and 1, that the system uses to sort the notifications from your app.
+     * The highest score gets featured in the notification summary.
+     * See https://developer.apple.com/documentation/usernotifications/unnotificationcontent/3821031-relevancescore
+     * @var float
+     */
+    private $relevanceScore = null;
 
     public function generateJSONPayload(): string {
         $payload = array();
@@ -148,6 +179,15 @@ class APNSNotification {
         }
         if ($this->isMutable) {
             $payload['aps']['mutable-content'] = 1;
+        }
+        if ($this->isContentAvailable) {
+            $payload['aps']['content-available'] = 1;
+        }
+        if($this->interruptionLevel !== null) {
+            $payload['aps']['interruption-level'] = $this->interruptionLevel;
+        }
+        if($this->relevanceScore !== null) {
+            $payload['aps']['relevance-score'] = $this->relevanceScore;
         }
 
         foreach ($this->data as $key => $value) {
@@ -386,6 +426,26 @@ class APNSNotification {
     }
 
     /**
+     * The background notification flag. To perform a silent background update, specify the value 1 and don’t include
+     * the alert, badge, or sound keys in your payload.
+     * See https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_background_updates_to_your_app
+     * @return bool
+     */
+    public function isContentAvailable(): bool {
+        return $this->isContentAvailable;
+    }
+
+    /**
+     * The background notification flag. To perform a silent background update, specify the value 1 and don’t include
+     * the alert, badge, or sound keys in your payload.
+     * See https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_background_updates_to_your_app
+     * @param bool $isContentAvailable
+     */
+    public function setContentAvailable(bool $isContentAvailable): void {
+        $this->isContentAvailable = $isContentAvailable;
+    }
+
+    /**
      * The priority of the notification.
      * Use 10 to send the notification immediately.
      * Use 5 to send the notification based on power considerations on the user’s device.
@@ -413,6 +473,64 @@ class APNSNotification {
             throw new APNSException("Only values 5 and 10 are allowed to be set as priority.");
         }
         $this->priority = $priority;
+    }
+
+    /**
+     * A string that indicates the importance and delivery timing of a notification. The string values “passive”,
+     * “active”, “time-sensitive”, or “critical” correspond to the UNNotificationInterruptionLevel enumeration cases.
+     * See https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel
+     * @return string|null
+     */
+    public function getInterruptionLevel(): ?string {
+        return $this->interruptionLevel;
+    }
+
+    /**
+     * A string that indicates the importance and delivery timing of a notification. The string values “passive”,
+     * “active”, “time-sensitive”, or “critical” correspond to the UNNotificationInterruptionLevel enumeration cases.
+     * Set to null to let APNS decide.
+     * See https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel
+     * @param string|null $interruptionLevel
+     * @throws APNSException Throws when an invalid interruption level is provided.
+     */
+    public function setInterruptionLevel(?string $interruptionLevel): void {
+        switch($interruptionLevel) {
+            case null:
+            case "passive":
+            case "active":
+            case "time-sensitive":
+            case "critical":
+                $this->interruptionLevel = $interruptionLevel;
+                break;
+            default:
+                throw new APNSException("Invalid interruption level provided: $interruptionLevel");
+        }
+    }
+
+    /**
+     * The relevance score, a number between 0 and 1, that the system uses to sort the notifications from your app.
+     * The highest score gets featured in the notification summary.
+     * Set to null to let iOS decide.
+     * See https://developer.apple.com/documentation/usernotifications/unnotificationcontent/3821031-relevancescore
+     * @return float|null
+     */
+    public function getRelevanceScore(): ?float {
+        return $this->relevanceScore;
+    }
+
+    /**
+     * The relevance score, a number between 0 and 1, that the system uses to sort the notifications from your app.
+     * The highest score gets featured in the notification summary.
+     * Set to null to let iOS decide.
+     * See https://developer.apple.com/documentation/usernotifications/unnotificationcontent/3821031-relevancescore
+     * @param float|null $relevanceScore
+     * @throws APNSException Throws if $relevanceScore < 0.0 or $relevanceScore > 1.0
+     */
+    public function setRelevanceScore(?float $relevanceScore): void {
+        if($relevanceScore < 0.0 || $relevanceScore > 1.0) {
+            throw new APNSException("Invalid relevance score provided. Needs to be between 0.0 and 1.0. ($relevanceScore was given)");
+        }
+        $this->relevanceScore = $relevanceScore;
     }
 
 }
