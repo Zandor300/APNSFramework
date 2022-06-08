@@ -78,3 +78,15 @@ try {
     // Handle exception
 }
 ```
+
+## Troubleshooting
+
+### Certificate errors
+
+You might need to set the root certificate for the APNS request using `setRootCertificatePath` on the `APNS` object.
+You can download this certificate using the link in the Apple Developer documentation:
+[`Establish a Trusted Connection to APNs`](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server#2943333) > `AAA Certificate Services root certificate`
+
+```php
+$apns->setRootCertificatePath(__DIR__ . "/AAACertificateServices.crt");
+```
