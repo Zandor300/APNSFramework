@@ -1,3 +1,15 @@
+# [1.6.0](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.5.0...v1.6.0) (2022-06-08)
+
+
+### Bug Fixes
+
+* Improved null checking. ([bdeb3fb](https://git.zsinfo.nl/Zandor300/apnsframework/commit/bdeb3fb713f9eb19fcc58c615bb1e6bf5fbd008f))
+
+
+### Features
+
+* Add support for isContentAvailable, interruptionLevel and relevanceScore fields for a notification. ([348ba4f](https://git.zsinfo.nl/Zandor300/apnsframework/commit/348ba4f740cbe55f099f28d21e8bb91bf0a5abd0))
+
 # [1.5.0](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.4.1...v1.5.0) (2022-06-08)
 
 
