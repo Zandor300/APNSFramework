@@ -1,3 +1,10 @@
+## [1.6.2](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.1...v1.6.2) (2024-12-03)
+
+
+### Bug Fixes
+
+* **deps:** update semantic-release monorepo ([5185355](https://git.zsinfo.nl/Zandor300/apnsframework/commit/518535518a271a6f3ea0c3997e4baa7dffcc1f42))
+
 ## [1.6.1](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.0...v1.6.1) (2024-07-29)
 
 
