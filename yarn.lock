@@ -477,10 +477,10 @@
     p-filter "^4.0.0"
     url-join "^5.0.0"
 
-"@semantic-release/gitlab@13.2.2":
-  version "13.2.2"
-  resolved "https://registry.yarnpkg.com/@semantic-release/gitlab/-/gitlab-13.2.2.tgz#367e81b7444c15445b7abab435d2bdabbef4ba15"
-  integrity sha512-T2EEqQJIKmEwz14iO2KfClbpdlexLUb6TIVF+IYCzKrrME2BO+ax699OSvr1pBz047vcf59HLlNQdSmTbybbSw==
+"@semantic-release/gitlab@13.2.3":
+  version "13.2.3"
+  resolved "https://registry.yarnpkg.com/@semantic-release/gitlab/-/gitlab-13.2.3.tgz#de56af3a5faaf9dffa2d8d28b341edc0e0b855c7"
+  integrity sha512-AzH/s7r8CLDN8dnbkrXnC+Gy9NYG/qRIIKMalaqNFAorgR+goGcqMb/6vIY9aVvwaoT1bo8xr1A+eeuuL4dGEQ==
   dependencies:
     "@semantic-release/error" "^4.0.0"
     aggregate-error "^5.0.0"
