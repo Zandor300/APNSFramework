@@ -66,10 +66,10 @@
   resolved "https://registry.yarnpkg.com/@isaacs/string-locale-compare/-/string-locale-compare-1.1.0.tgz#291c227e93fd407a96ecd59879a35809120e432b"
   integrity sha512-SQ7Kzhh9+D+ZW9MA0zkYv3VXhIDNx+LzM6EJ+/65I3QY+enU6Itte7E5XX7EWrqLW2FN4n06GWzBnPoC3th2aQ==
 
-"@iwavesmedia/semantic-release-composer@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@iwavesmedia/semantic-release-composer/-/semantic-release-composer-1.0.0.tgz#51d3d979a3d66f8a8711fb5818fc275ce153ab9e"
-  integrity sha512-DXT1ghphZrfsRvdnNkwRadEbXHxkBwEWhJLlIhEnAlJl61kg1PJB7p0hok48wNVe86glUbElABziWC8YUcvzyw==
+"@iwavesmedia/semantic-release-composer@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@iwavesmedia/semantic-release-composer/-/semantic-release-composer-1.1.0.tgz#28cf1f76b52579a574bdcb55c0f7274cc589de9c"
+  integrity sha512-qhvrNEHgvMEz6nF3C1jkaJkGlztU1wiQdI/BDYiDIq5N++ypy1tAPUT+a6iezqtNErWOoDU1Oi4lK3DklxfGGA==
   dependencies:
     "@semantic-release/error" "^2.2.0"
 
