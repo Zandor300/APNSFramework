@@ -1,3 +1,11 @@
+## [1.6.3](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.2...v1.6.3) (2025-08-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @iwavesmedia/semantic-release-composer to v1.1.0 ([0155767](https://git.zsinfo.nl/Zandor300/apnsframework/commit/0155767ae7ef6a3ae324fa0e0f7a33e12b079eb3))
+* **deps:** update semantic-release monorepo ([925bf1a](https://git.zsinfo.nl/Zandor300/apnsframework/commit/925bf1ab972165bf6d134bd92fb735953d2997f8))
+
 ## [1.6.2](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.1...v1.6.2) (2024-12-03)
 
 
