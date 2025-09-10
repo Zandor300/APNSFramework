@@ -1,6 +1,6 @@
 {
     "name": "zandor300/apnsframework",
-    "version": "1.6.3",
+    "version": "1.6.4",
     "description": "PHP framework for easy interaction with Apple's Push Notification Service.",
     "type": "library",
     "keywords": [
