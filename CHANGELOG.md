@@ -1,3 +1,10 @@
+## [1.6.5](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.4...v1.6.5) (2026-02-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency semantic-release to v25 ([f41b6af](https://git.zsinfo.nl/Zandor300/apnsframework/commit/f41b6af40763a3b4ef7a52fd830d6231f6e71d16))
+
 ## [1.6.4](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.3...v1.6.4) (2025-09-10)
 
 
