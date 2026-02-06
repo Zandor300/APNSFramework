@@ -1,3 +1,10 @@
+## [1.6.6](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.5...v1.6.6) (2026-02-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @semantic-release/gitlab to v13.3.0 ([005a5b6](https://git.zsinfo.nl/Zandor300/apnsframework/commit/005a5b6aa887490bff7f46698ad5595b46bf96f1))
+
 ## [1.6.5](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.4...v1.6.5) (2026-02-06)
 
 
