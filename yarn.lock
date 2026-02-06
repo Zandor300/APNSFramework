@@ -512,10 +512,10 @@
     undici "^7.0.0"
     url-join "^5.0.0"
 
-"@semantic-release/gitlab@13.2.8":
-  version "13.2.8"
-  resolved "https://registry.yarnpkg.com/@semantic-release/gitlab/-/gitlab-13.2.8.tgz#b8ca686c13f4f20e5884c504038a03be2bdd02e0"
-  integrity sha512-uTRRpTHHMQ4kC94E5yN18tkpVZ/gxtFDfWhfluE7xS3AhNG2cBKuZi0cDp0kwdMpiNRB6YdPTnLyXJxV7BKoiA==
+"@semantic-release/gitlab@13.3.0":
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/@semantic-release/gitlab/-/gitlab-13.3.0.tgz#f8d4b16148b25eb8c23569c1681d709ba6856458"
+  integrity sha512-E0q4qbTdVQZW8Siqz1YQjfSSXE2U/Z7lJasUlpHGRu+OYXsLCIU6o18scquofyP7CBxyKLIx7TDiLVRko1ekGw==
   dependencies:
     "@semantic-release/error" "^4.0.0"
     aggregate-error "^5.0.0"
