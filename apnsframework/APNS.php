@@ -47,6 +47,18 @@ class APNS {
      */
     private $apnsAuthorization = null;
 
+    /**
+     * @var int|null Timestamp when the APNS authorization token was generated.
+     */
+    private $apnsAuthorizationIssuedAt = null;
+
+    /**
+     * Maximum age of the APNS authorization token in seconds.
+     * Apple rejects tokens with an iat older than 1 hour (3600s).
+     * We use 50 minutes (3000s) to provide a safety margin.
+     */
+    private const APNS_TOKEN_MAX_AGE = 3000;
+
     public function __construct($teamId, $bundleId, $authKeyPath, $authKeyId) {
         $this->teamId = $teamId;
         $this->bundleId = $bundleId;
@@ -120,12 +132,13 @@ class APNS {
      * @throws APNSException
      */
     private function getAPNSAuthorizationToken(): string {
-        if($this->apnsAuthorization == null) {
+        if($this->apnsAuthorization == null || (time() - $this->apnsAuthorizationIssuedAt) >= self::APNS_TOKEN_MAX_AGE) {
             $authKey = file_get_contents($this->authKeyPath);
             if ($authKey == false) {
                 throw new APNSException("Can't read auth key. Failed to read file.");
             }
-            $this->apnsAuthorization = JWT::encode(["iss" => $this->teamId, "iat" => time()], $authKey, "ES256", $this->authKeyId);
+            $this->apnsAuthorizationIssuedAt = time();
+            $this->apnsAuthorization = JWT::encode(["iss" => $this->teamId, "iat" => $this->apnsAuthorizationIssuedAt], $authKey, "ES256", $this->authKeyId);
         }
         return $this->apnsAuthorization;
     }
