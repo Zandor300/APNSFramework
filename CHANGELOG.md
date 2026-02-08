@@ -1,3 +1,10 @@
+## [1.6.7](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.6...v1.6.7) (2026-02-08)
+
+
+### Bug Fixes
+
+* Implement APNS token refresh if it's age is longer than 50 minutes old. Fix for ExpiredProviderToken error thrown by APNS api after 1 hour. ([cc140e1](https://git.zsinfo.nl/Zandor300/apnsframework/commit/cc140e17de3aa63585bbc0189d4fa76a45daed07))
+
 ## [1.6.6](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.5...v1.6.6) (2026-02-06)
 
 
