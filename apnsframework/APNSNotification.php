@@ -11,7 +11,7 @@ use APNSFramework\Exception\APNSException;
  *
  * Class APNSNotification
  */
-class APNSNotification {
+class APNSNotification implements APNSNotificationInterface {
 
     /**
      * The title of the notification. Apple Watch displays this string in the short look notification interface. Specify
@@ -140,6 +140,9 @@ class APNSNotification {
      */
     private $relevanceScore = null;
 
+    /**
+     * @inheritDoc
+     */
     public function generateJSONPayload(): string {
         $payload = array();
 
@@ -443,6 +446,23 @@ class APNSNotification {
      */
     public function setContentAvailable(bool $isContentAvailable): void {
         $this->isContentAvailable = $isContentAvailable;
+    }
+
+    /**
+     * The push type of this notification. Notifications with a body are sent as an alert, notifications without a body
+     * are sent as a background notification.
+     * @return string
+     */
+    public function getPushType(): string {
+        return $this->body !== null ? APNSPushType::alert : APNSPushType::background;
+    }
+
+    /**
+     * Regular notifications are sent to the plain bundle id, so no suffix is used.
+     * @return string|null
+     */
+    public function getTopicSuffix(): ?string {
+        return null;
     }
 
     /**

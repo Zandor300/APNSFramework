@@ -4,6 +4,7 @@ namespace APNSFramework;
 
 use APNSFramework\Exception\APNSDeviceTokenInactive;
 use APNSFramework\Exception\APNSException;
+use APNSFramework\Exception\APNSTransportException;
 use Firebase\JWT\JWT;
 
 /**
@@ -145,20 +146,26 @@ class APNS {
 
     /**
      * Send the $notification to $token.
-     * @param APNSNotification $notification The notification to send.
-     * @param APNSToken $token The token to send the notification to.
-     * @throws APNSException If an error occurred. See the message for more info.
+     * @param APNSNotificationInterface $notification The notification to send. This can be an APNSNotification or an
+     *                                                APNSLiveActivityNotification.
+     * @param APNSToken $token The token to send the notification to. For a Live Activity notification this is the
+     *                         ActivityKit push-to-start or update token instead of the device token.
+     * @throws APNSException If an error occurred. Use getStatusCode() and getReason() to handle the response.
      * @throws APNSDeviceTokenInactive If the APNSToken is inactive and can be removed.
+     * @throws APNSTransportException If the request failed before a response was received. It is unknown whether Apple
+     *                                accepted the notification, so a Live Activity start should not be retried.
      */
-    public function sendNotification(APNSNotification $notification, APNSToken $token): void {
+    public function sendNotification(APNSNotificationInterface $notification, APNSToken $token): void {
         $authorization = $this->getAPNSAuthorizationToken();
+
+        $topicSuffix = $notification->getTopicSuffix();
 
         // Prepare the header.
         $header = array();
         $header[] = "content-type: application/json";
         $header[] = "authorization: bearer {$authorization}";
-        $header[] = "apns-topic: {$this->bundleId}";
-        $header[] = "apns-push-type: " . ($notification->getBody() != null ? "alert" : "background");
+        $header[] = "apns-topic: " . $this->bundleId . ($topicSuffix !== null ? $topicSuffix : "");
+        $header[] = "apns-push-type: " . $notification->getPushType();
         $header[] = "apns-priority: " . $notification->getPriority();
 
         // Create the curl request.
@@ -180,17 +187,30 @@ class APNS {
 
         $chError = curl_error($this->curlHandle);
         if (!empty($chError)) {
-            throw new APNSException("curl error: $chError");
+            throw new APNSTransportException("curl error: $chError", 0, null, $token->getToken());
         }
 
-        if ($httpcode == 400 || $httpcode == 403 || $httpcode == 404 || $httpcode == 405 || $httpcode == 413 || $httpcode == 429 || $httpcode == 500 || $httpcode == 503) {
-            $output = json_decode($response, true);
-            throw new APNSException("APNs error: " . $output['reason'] . " (HTTP $httpcode)" . PHP_EOL . "See the following link for instructions: https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/handling_notification_responses_from_apns");
-        } else if ($httpcode == 410) {
-            throw new APNSDeviceTokenInactive("The device token is inactive. It can be removed from the database until registered again. (" . $token->getToken() . ")");
-        } else if ($httpcode != 200) {
-            throw new APNSException("APNs error: Unhandled http status code $httpcode." . PHP_EOL . "See the following link for instructions: https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/handling_notification_responses_from_apns");
+        if ($httpcode == 200) {
+            return;
         }
+
+        // Every non-200 response can contain a reason. Pass it along so callers can act on it without parsing the
+        // message of the exception.
+        $reason = null;
+        $output = json_decode($response, true);
+        if (is_array($output) && isset($output['reason']) && is_string($output['reason'])) {
+            $reason = $output['reason'];
+        }
+
+        $documentationHint = PHP_EOL . "See the following link for instructions: https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/handling_notification_responses_from_apns";
+
+        if ($httpcode == 410) {
+            throw new APNSDeviceTokenInactive("The token is inactive. It can be removed from the database until registered again.", $httpcode, $reason, $token->getToken());
+        }
+        if ($reason !== null) {
+            throw new APNSException("APNs error: $reason (HTTP $httpcode)" . $documentationHint, $httpcode, $reason, $token->getToken());
+        }
+        throw new APNSException("APNs error: Unhandled http status code $httpcode." . $documentationHint, $httpcode, null, $token->getToken());
     }
 
 }
