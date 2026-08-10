@@ -15,9 +15,7 @@ before_script:
 composer-validate:
   stage: lint
   script:
-    # --no-check-lock because semantic-release bumps the version field in composer.json without
-    # touching the lock file, which would leave the default branch red after every release.
-    - composer validate --no-check-lock
+    - composer validate
   tags:
     - docker
 
@@ -49,6 +47,12 @@ publish:
   image: node:lts
   stage: publish
   before_script:
+    # @iwavesmedia/semantic-release-composer runs `composer update --lock` whenever a composer.lock
+    # is present, so the release needs a PHP and a Composer next to node. php-xml and php-mbstring
+    # are required by the dev dependencies the lock file describes.
+    - apt-get update
+    - apt-get install -y --no-install-recommends php-cli php-xml php-mbstring
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
     - yarn install
   script:
     - yarn semantic-release

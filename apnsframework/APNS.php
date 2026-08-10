@@ -202,8 +202,9 @@ class APNS {
         $header[] = "authorization: bearer {$authorization}";
         $header[] = "apns-topic: {$this->bundleId}";
         $header[] = "apns-push-type: " . ($isBackground ? "background" : "alert");
-        // APNs rejects priority 10 for a payload containing content-available, and 10 is the default,
-        // so a background notification is sent at the only priority APNs accepts for it.
+        // APNs rejects priority 10 for a payload that contains only content-available, and 10 is the
+        // default, so a background notification is sent at the priority APNs accepts for it. An
+        // alert notification may carry content-available alongside its alert and keeps priority 10.
         $header[] = "apns-priority: " . ($isBackground ? 5 : $notification->getPriority());
 
         $collapseId = $notification->getCollapseId();

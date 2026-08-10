@@ -9,9 +9,14 @@ composer.phar
 # run, and Composer refuses to resolve firebase/php-jwt because of the advisories against every
 # version of it, which leaves no installable set of packages at all.
 #
-# The lock pins firebase/php-jwt v6.11.1, which is listed under the disputed CVE-2025-45769. That
-# advisory is about HMAC secret strength and short RSA keys. This framework only signs APNs
-# authorization tokens with ES256, so it is not affected. Revisit when a fixed 6.x is published.
+# The lock pins firebase/php-jwt v6.11.1, which is covered by CVE-2025-45769, disputed on NVD. That
+# advisory is about HMAC secret strength and short RSA keys, and this framework only signs APNs
+# authorization tokens with ES256, so it is not affected.
+#
+# There is no fixed 6.x: firebase/php-jwt 7.0.0 is the patched release. It requires PHP ^8.0, which
+# the locked v6.11.1 already requires as well, so the >=7.1.0 floor this package declares is not
+# actually reachable today. Raising that floor and moving to 7.x is a breaking change, so it is left
+# as a deliberate decision rather than something a lock refresh does silently.
 
 ### PhpStorm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
