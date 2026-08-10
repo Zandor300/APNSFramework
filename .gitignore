@@ -5,9 +5,9 @@
 composer.phar
 /vendor/
 
-# Commit your application's lock file https://getcomposer.org/doc/01-basic-usage.md#commit-your-composer-lock-file-to-version-control
-# You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
-composer.lock
+# The lock file is committed on purpose. Without it CI resolves dependencies from scratch on every
+# run, and Composer refuses to resolve firebase/php-jwt because of the advisories against every
+# version of it, which leaves no installable set of packages at all.
 
 ### PhpStorm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
@@ -101,3 +101,6 @@ testNotification.php
 
 /node_modules/
 yarn-error.log
+
+# PHPUnit
+.phpunit.result.cache

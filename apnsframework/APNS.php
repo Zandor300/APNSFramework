@@ -153,13 +153,7 @@ class APNS {
     public function sendNotification(APNSNotification $notification, APNSToken $token): void {
         $authorization = $this->getAPNSAuthorizationToken();
 
-        // Prepare the header.
-        $header = array();
-        $header[] = "content-type: application/json";
-        $header[] = "authorization: bearer {$authorization}";
-        $header[] = "apns-topic: {$this->bundleId}";
-        $header[] = "apns-push-type: " . ($notification->getBody() != null ? "alert" : "background");
-        $header[] = "apns-priority: " . $notification->getPriority();
+        $header = $this->buildRequestHeaders($notification, $authorization);
 
         // Create the curl request.
         if($this->curlHandle == null) {
@@ -191,6 +185,29 @@ class APNS {
         } else if ($httpcode != 200) {
             throw new APNSException("APNs error: Unhandled http status code $httpcode." . PHP_EOL . "See the following link for instructions: https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/handling_notification_responses_from_apns");
         }
+    }
+
+    /**
+     * Build the HTTP headers that are sent to APNs for $notification.
+     * Exposed so the generated headers can be asserted without contacting APNs.
+     * @param APNSNotification $notification The notification that will be sent.
+     * @param string $authorization The APNs authorization token.
+     * @return string[] The headers, one entry per header line.
+     */
+    public function buildRequestHeaders(APNSNotification $notification, string $authorization): array {
+        $header = array();
+        $header[] = "content-type: application/json";
+        $header[] = "authorization: bearer {$authorization}";
+        $header[] = "apns-topic: {$this->bundleId}";
+        $header[] = "apns-push-type: " . ($notification->getBody() != null ? "alert" : "background");
+        $header[] = "apns-priority: " . $notification->getPriority();
+
+        $collapseId = $notification->getCollapseId();
+        if ($collapseId !== null) {
+            $header[] = "apns-collapse-id: " . $collapseId;
+        }
+
+        return $header;
     }
 
 }

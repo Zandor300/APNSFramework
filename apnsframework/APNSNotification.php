@@ -54,8 +54,9 @@ class APNSNotification {
     /**
      * The sound that should be played with the notification. The specified sound file must be on the user’s device
      * already, either in the app's bundle or in the Library/Sounds folder of the app’s container.
+     * Set to null to omit the sound key entirely, which is required for silent background notifications.
      * See https://developer.apple.com/documentation/usernotifications/unnotificationsound
-     * @var string
+     * @var string|null
      */
     private $sound = "default";
 
@@ -140,6 +141,20 @@ class APNSNotification {
      */
     private $relevanceScore = null;
 
+    /**
+     * An identifier that APNs uses to coalesce notifications. Multiple notifications with the same collapse
+     * identifier are displayed to the user as a single notification, and only the last one sent is delivered
+     * when the device was offline in the meantime.
+     * See https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns
+     * @var string|null
+     */
+    private $collapseId = null;
+
+    /**
+     * The maximum size of a collapse identifier in bytes, as enforced by APNs.
+     */
+    private const COLLAPSE_ID_MAX_BYTES = 64;
+
     public function generateJSONPayload(): string {
         $payload = array();
 
@@ -161,7 +176,10 @@ class APNSNotification {
         if ($this->badge !== null) {
             $payload['aps']['badge'] = $this->badge;
         }
-        if (!$this->isCritical) {
+        if ($this->sound === null) {
+            // Explicitly no sound. Required for silent background notifications, which must not contain
+            // an alert, badge or sound key.
+        } else if (!$this->isCritical) {
             $payload['aps']['sound'] = $this->sound;
         } else {
             $payload['aps']['sound'] = array();
@@ -307,18 +325,20 @@ class APNSNotification {
     /**
      * The sound that should be played with the notification. The specified sound file must be on the user’s device
      * already, either in the app's bundle or in the Library/Sounds folder of the app’s container.
-     * @return string
+     * @return string|null The sound, or null when the notification explicitly omits the sound key.
      */
-    public function getSound(): string {
+    public function getSound(): ?string {
         return $this->sound;
     }
 
     /**
      * Set the sound that should be played with the notification. The specified sound file must be on the user’s device
      * already, either in the app's bundle or in the Library/Sounds folder of the app’s container.
-     * @param string $sound
+     * Pass null to leave the sound key out of the payload entirely. A background notification must not contain
+     * an alert, badge or sound key, so silent notifications need this.
+     * @param string|null $sound
      */
-    public function setSound(string $sound): void {
+    public function setSound(?string $sound): void {
         $this->sound = $sound;
     }
 
@@ -531,6 +551,36 @@ class APNSNotification {
             throw new APNSException("Invalid relevance score provided. Needs to be between 0.0 and 1.0. ($relevanceScore was given)");
         }
         $this->relevanceScore = $relevanceScore;
+    }
+
+    /**
+     * An identifier that APNs uses to coalesce notifications.
+     * See https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns
+     * @return string|null The collapse identifier, or null when the apns-collapse-id header should be left out.
+     */
+    public function getCollapseId(): ?string {
+        return $this->collapseId;
+    }
+
+    /**
+     * An identifier that APNs uses to coalesce notifications. Notifications with the same collapse identifier
+     * replace each other, so a device that was offline only receives the most recent one.
+     * Set to null to leave the apns-collapse-id header out of the request.
+     * See https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns
+     * @param string|null $collapseId
+     * @throws APNSException Throws when the collapse identifier is empty or larger than 64 bytes.
+     */
+    public function setCollapseId(?string $collapseId): void {
+        if ($collapseId !== null) {
+            $length = strlen($collapseId);
+            if ($length === 0) {
+                throw new APNSException("The collapse id can't be an empty string. Use null to not send a collapse id.");
+            }
+            if ($length > self::COLLAPSE_ID_MAX_BYTES) {
+                throw new APNSException("The collapse id can't be longer than " . self::COLLAPSE_ID_MAX_BYTES . " bytes. ($length bytes were given)");
+            }
+        }
+        $this->collapseId = $collapseId;
     }
 
 }
