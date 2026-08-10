@@ -20,7 +20,7 @@
         "firebase/php-jwt": "^5.2|^6.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.6"
+        "phpunit/phpunit": "^13.0"
     },
     "autoload": {
         "psr-4": {
