@@ -1,3 +1,10 @@
+# [1.7.0](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.7...v1.7.0) (2026-08-10)
+
+
+### Features
+
+* support silent background notifications and collapse ids ([f67c14a](https://git.zsinfo.nl/Zandor300/apnsframework/commit/f67c14a4e684dc76d728b9f5de8382f2e97df46c))
+
 ## [1.6.7](https://git.zsinfo.nl/Zandor300/apnsframework/compare/v1.6.6...v1.6.7) (2026-02-08)
 
 
