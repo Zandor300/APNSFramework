@@ -195,12 +195,16 @@ class APNS {
      * @return string[] The headers, one entry per header line.
      */
     public function buildRequestHeaders(APNSNotification $notification, string $authorization): array {
+        $isBackground = self::isBackgroundNotification($notification);
+
         $header = array();
         $header[] = "content-type: application/json";
         $header[] = "authorization: bearer {$authorization}";
         $header[] = "apns-topic: {$this->bundleId}";
-        $header[] = "apns-push-type: " . ($notification->getBody() != null ? "alert" : "background");
-        $header[] = "apns-priority: " . $notification->getPriority();
+        $header[] = "apns-push-type: " . ($isBackground ? "background" : "alert");
+        // APNs rejects priority 10 for a payload containing content-available, and 10 is the default,
+        // so a background notification is sent at the only priority APNs accepts for it.
+        $header[] = "apns-priority: " . ($isBackground ? 5 : $notification->getPriority());
 
         $collapseId = $notification->getCollapseId();
         if ($collapseId !== null) {
@@ -208,6 +212,21 @@ class APNS {
         }
 
         return $header;
+    }
+
+    /**
+     * Whether $notification is a background update as APNs defines one: it sets content-available
+     * and carries no alert, badge or sound.
+     *
+     * Looking at the body alone isn't enough. A badge only notification has no body but does show up
+     * on the user's device, and sending it as a background notification makes APNs drop or throttle
+     * it. Note that the sound defaults to "default", so a silent notification has to set it to null.
+     */
+    private static function isBackgroundNotification(APNSNotification $notification): bool {
+        return $notification->isContentAvailable()
+            && $notification->getBody() === null
+            && $notification->getBadge() === null
+            && $notification->getSound() === null;
     }
 
 }

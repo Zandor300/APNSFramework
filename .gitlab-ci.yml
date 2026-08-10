@@ -15,7 +15,9 @@ before_script:
 composer-validate:
   stage: lint
   script:
-    - composer validate
+    # --no-check-lock because semantic-release bumps the version field in composer.json without
+    # touching the lock file, which would leave the default branch red after every release.
+    - composer validate --no-check-lock
   tags:
     - docker
 

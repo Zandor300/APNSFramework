@@ -568,7 +568,8 @@ class APNSNotification {
      * Set to null to leave the apns-collapse-id header out of the request.
      * See https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns
      * @param string|null $collapseId
-     * @throws APNSException Throws when the collapse identifier is empty or larger than 64 bytes.
+     * @throws APNSException Throws when the collapse identifier is empty, larger than 64 bytes or
+     *                       contains control characters.
      */
     public function setCollapseId(?string $collapseId): void {
         if ($collapseId !== null) {
@@ -578,6 +579,11 @@ class APNSNotification {
             }
             if ($length > self::COLLAPSE_ID_MAX_BYTES) {
                 throw new APNSException("The collapse id can't be longer than " . self::COLLAPSE_ID_MAX_BYTES . " bytes. ($length bytes were given)");
+            }
+            // The collapse id ends up in an HTTP header verbatim, so a carriage return or line feed
+            // in it would let the caller append headers of their own.
+            if (preg_match('/[\x00-\x1F\x7F]/', $collapseId) === 1) {
+                throw new APNSException("The collapse id can't contain control characters.");
             }
         }
         $this->collapseId = $collapseId;

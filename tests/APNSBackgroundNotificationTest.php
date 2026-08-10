@@ -118,4 +118,101 @@ final class APNSBackgroundNotificationTest extends TestCase {
         $notification->setCollapseId("");
     }
 
+    /**
+     * @dataProvider collapseIdsWithControlCharacters
+     */
+    public function testCollapseIdWithControlCharactersThrows(string $collapseId): void {
+        $notification = new APNSNotification();
+
+        $this->expectException(APNSException::class);
+        $notification->setCollapseId($collapseId);
+    }
+
+    public static function collapseIdsWithControlCharacters(): array {
+        return [
+            "carriage return and line feed" => ["energy-prices\r\nx-injected: 1"],
+            "line feed" => ["energy-prices\n"],
+            "carriage return" => ["energy-prices\r"],
+            "null byte" => ["energy-prices\0"],
+            "tab" => ["energy-prices\t42"],
+            "delete" => ["energy-prices\x7F"],
+        ];
+    }
+
+    public function testCollapseIdCannotInjectAnAdditionalHeader(): void {
+        $apns = new APNS("TEAMID1234", "nl.gridsense.GridSenseRN", "/dev/null", "KEYID12345");
+        $notification = $this->createBackgroundNotification();
+
+        try {
+            $notification->setCollapseId("energy-prices\r\napns-topic: nl.attacker.App");
+            $this->fail("Expected the collapse id to be rejected.");
+        } catch (APNSException $exception) {
+            // Expected.
+        }
+
+        $headers = $apns->buildRequestHeaders($notification, "authorization-token");
+        foreach ($headers as $header) {
+            $this->assertStringNotContainsString("nl.attacker.App", $header);
+        }
+    }
+
+    public function testBadgeOnlyNotificationIsAnAlertPush(): void {
+        $apns = new APNS("TEAMID1234", "nl.gridsense.GridSenseRN", "/dev/null", "KEYID12345");
+        $notification = new APNSNotification();
+        $notification->setBadge(3);
+
+        $headers = $apns->buildRequestHeaders($notification, "authorization-token");
+
+        // No body, but the notification still updates something the user sees.
+        $this->assertContains("apns-push-type: alert", $headers);
+        $this->assertContains("apns-priority: 10", $headers);
+    }
+
+    public function testContentAvailableNotificationWithABadgeIsAnAlertPush(): void {
+        $apns = new APNS("TEAMID1234", "nl.gridsense.GridSenseRN", "/dev/null", "KEYID12345");
+        $notification = new APNSNotification();
+        $notification->setContentAvailable(true);
+        $notification->setSound(null);
+        $notification->setBadge(1);
+
+        $headers = $apns->buildRequestHeaders($notification, "authorization-token");
+
+        $this->assertContains("apns-push-type: alert", $headers);
+    }
+
+    public function testContentAvailableNotificationKeepingTheDefaultSoundIsAnAlertPush(): void {
+        $apns = new APNS("TEAMID1234", "nl.gridsense.GridSenseRN", "/dev/null", "KEYID12345");
+        $notification = new APNSNotification();
+        $notification->setContentAvailable(true);
+
+        $headers = $apns->buildRequestHeaders($notification, "authorization-token");
+
+        // The sound defaults to "default", so this payload is not a background update.
+        $this->assertContains("apns-push-type: alert", $headers);
+    }
+
+    public function testSilentNotificationOnTheDefaultPriorityIsSentAtPriorityFive(): void {
+        $apns = new APNS("TEAMID1234", "nl.gridsense.GridSenseRN", "/dev/null", "KEYID12345");
+        $notification = new APNSNotification();
+        $notification->setContentAvailable(true);
+        $notification->setSound(null);
+
+        $headers = $apns->buildRequestHeaders($notification, "authorization-token");
+
+        // APNs rejects priority 10 together with content-available, and 10 is the default.
+        $this->assertContains("apns-push-type: background", $headers);
+        $this->assertContains("apns-priority: 5", $headers);
+    }
+
+    public function testNotificationWithoutContentAvailableIsAnAlertPush(): void {
+        $apns = new APNS("TEAMID1234", "nl.gridsense.GridSenseRN", "/dev/null", "KEYID12345");
+        $notification = new APNSNotification();
+        $notification->setSound(null);
+        $notification->addData("type", "something");
+
+        $headers = $apns->buildRequestHeaders($notification, "authorization-token");
+
+        $this->assertContains("apns-push-type: alert", $headers);
+    }
+
 }

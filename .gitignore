@@ -8,6 +8,10 @@ composer.phar
 # The lock file is committed on purpose. Without it CI resolves dependencies from scratch on every
 # run, and Composer refuses to resolve firebase/php-jwt because of the advisories against every
 # version of it, which leaves no installable set of packages at all.
+#
+# The lock pins firebase/php-jwt v6.11.1, which is listed under the disputed CVE-2025-45769. That
+# advisory is about HMAC secret strength and short RSA keys. This framework only signs APNs
+# authorization tokens with ES256, so it is not affected. Revisit when a fixed 6.x is published.
 
 ### PhpStorm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
