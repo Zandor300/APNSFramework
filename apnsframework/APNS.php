@@ -158,15 +158,7 @@ class APNS {
     public function sendNotification(APNSNotificationInterface $notification, APNSToken $token): void {
         $authorization = $this->getAPNSAuthorizationToken();
 
-        $topicSuffix = $notification->getTopicSuffix();
-
-        // Prepare the header.
-        $header = array();
-        $header[] = "content-type: application/json";
-        $header[] = "authorization: bearer {$authorization}";
-        $header[] = "apns-topic: " . $this->bundleId . ($topicSuffix !== null ? $topicSuffix : "");
-        $header[] = "apns-push-type: " . $notification->getPushType();
-        $header[] = "apns-priority: " . $notification->getPriority();
+        $header = $this->buildRequestHeaders($notification, $authorization);
 
         // Create the curl request.
         if($this->curlHandle == null) {
@@ -211,6 +203,31 @@ class APNS {
             throw new APNSException("APNs error: $reason (HTTP $httpcode)" . $documentationHint, $httpcode, $reason, $token->getToken());
         }
         throw new APNSException("APNs error: Unhandled http status code $httpcode." . $documentationHint, $httpcode, null, $token->getToken());
+    }
+
+    /**
+     * Build the HTTP headers that are sent to APNs for $notification.
+     * Exposed so the generated headers can be asserted without contacting APNs.
+     * @param APNSNotificationInterface $notification The notification that will be sent.
+     * @param string $authorization The APNs authorization token.
+     * @return string[] The headers, one entry per header line.
+     */
+    public function buildRequestHeaders(APNSNotificationInterface $notification, string $authorization): array {
+        $topicSuffix = $notification->getTopicSuffix();
+
+        $header = array();
+        $header[] = "content-type: application/json";
+        $header[] = "authorization: bearer {$authorization}";
+        $header[] = "apns-topic: " . $this->bundleId . ($topicSuffix !== null ? $topicSuffix : "");
+        $header[] = "apns-push-type: " . $notification->getPushType();
+        $header[] = "apns-priority: " . $notification->getPriority();
+
+        $collapseId = $notification instanceof APNSNotification ? $notification->getCollapseId() : null;
+        if ($collapseId !== null) {
+            $header[] = "apns-collapse-id: " . $collapseId;
+        }
+
+        return $header;
     }
 
 }

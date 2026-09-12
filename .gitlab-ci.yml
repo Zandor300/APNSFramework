@@ -2,6 +2,7 @@ image: composer:latest
 
 stages:
   - lint
+  - test
   - publish
 
 cache:
@@ -34,6 +35,13 @@ php-lint-examples:
   tags:
     - docker
   allow_failure: true
+
+phpunit:
+  stage: test
+  script:
+    - ./vendor/bin/phpunit tests
+  tags:
+    - docker
 
 publish:
   image: node:lts
